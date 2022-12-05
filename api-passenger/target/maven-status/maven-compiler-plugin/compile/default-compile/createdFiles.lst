@@ -1,0 +1,5 @@
+com/echobuf/apipassenger/controller/TestController.class
+com/echobuf/apipassenger/ApiPassengerApplication.class
+com/echobuf/apipassenger/request/VerificationCodeDTO.class
+com/echobuf/apipassenger/service/VerificationCodeService.class
+com/echobuf/apipassenger/controller/VerificationCodeController.class
