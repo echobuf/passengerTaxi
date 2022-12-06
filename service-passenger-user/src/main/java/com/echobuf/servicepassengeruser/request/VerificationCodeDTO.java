@@ -1,4 +1,4 @@
-package com.echobuf.apipassenger.request;
+package com.echobuf.servicepassengeruser.request;
 
 import lombok.Data;
 

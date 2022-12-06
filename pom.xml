@@ -33,15 +33,18 @@
             <version>2.4</version>
             <classifier>jdk15</classifier>
         </dependency>
-
         <!-- add lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.24</version>
         </dependency>
-
-
+        <!-- add internal-common -->
+        <dependency>
+            <groupId>com.echobuf</groupId>
+            <artifactId>internal-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
