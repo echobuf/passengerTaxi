@@ -1,10 +1,12 @@
 package com.echobuf.apipassenger.service;
 
 import com.echobuf.apipassenger.remote.ServiceVerificationCodeClient;
+import com.echobuf.internalcommon.constant.CommonStatusEnum;
 import com.echobuf.internalcommon.dto.ResponseResult;
 import com.echobuf.internalcommon.response.NumberCodeResponse;
 import com.echobuf.internalcommon.response.TokenResponse;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,12 @@ public class VerificationCodeService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-    public ResponseResult generatorCode(String passgerPhone) {
+    /**
+     * 生成验证码
+     * @param passengerPhone
+     * @return
+     */
+    public ResponseResult generatorCode(String passengerPhone) {
 
         //调用验证码服务(业务逻辑写死 size = 6)
         ResponseResult<NumberCodeResponse> numberCodeResponse = serviceVerificationCodeClient.getNumberCode(6);
@@ -35,20 +42,38 @@ public class VerificationCodeService {
 
         //存入redis
         //key,value,过期时间
-        String key = verificationCodePrefix + passgerPhone;
+        String key = generateRedisKey(passengerPhone);
         stringRedisTemplate.opsForValue().set(key,numberCode+"",2, TimeUnit.MINUTES);
 
         //返回
         return ResponseResult.success("");
     }
 
+    /**
+     * 根据手机号生成redis中的key
+     * @param passengerPhone
+     * @return
+     */
+    private String generateRedisKey(String passengerPhone){
+        return verificationCodePrefix + passengerPhone;
+    }
+    /**
+     * 校验验证码
+     * @param passengerPhone
+     * @param verificationCode
+     * @return
+     */
     public ResponseResult checkVerificationCode(String passengerPhone,String verificationCode){
         //根据手机号，去redis查看是否有对应的key
-
-        //校验验证码
-
-        //根据校验结果处理对应情况
-
+        String key = generateRedisKey(passengerPhone);
+        String redisCode = stringRedisTemplate.opsForValue().get(key);
+        //校验验证码，根据校验结果处理对应情况
+        if(StringUtils.isBlank(redisCode)){
+            return ResponseResult.fail(CommonStatusEnum.VERIFICATION_CODE_ERROR.getCode(),CommonStatusEnum.VERIFICATION_CODE_ERROR.getValue());
+        }
+        if(!verificationCode.trim().equals(redisCode.trim())){
+            return ResponseResult.fail(CommonStatusEnum.VERIFICATION_CODE_ERROR.getCode(),CommonStatusEnum.VERIFICATION_CODE_ERROR.getValue());
+        }
         //如果校验成功则返回附带一个token
         String token = "token str";
         TokenResponse tokenResponse = new TokenResponse();
