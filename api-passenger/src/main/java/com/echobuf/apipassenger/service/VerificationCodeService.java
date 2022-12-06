@@ -3,6 +3,7 @@ package com.echobuf.apipassenger.service;
 import com.echobuf.apipassenger.remote.ServiceVerificationCodeClient;
 import com.echobuf.internalcommon.dto.ResponseResult;
 import com.echobuf.internalcommon.response.NumberCodeResponse;
+import com.echobuf.internalcommon.response.TokenResponse;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -39,5 +40,19 @@ public class VerificationCodeService {
 
         //返回
         return ResponseResult.success("");
+    }
+
+    public ResponseResult checkVerificationCode(String passengerPhone,String verificationCode){
+        //根据手机号，去redis查看是否有对应的key
+
+        //校验验证码
+
+        //根据校验结果处理对应情况
+
+        //如果校验成功则返回附带一个token
+        String token = "token str";
+        TokenResponse tokenResponse = new TokenResponse();
+        tokenResponse.setToken(token);
+        return ResponseResult.success(tokenResponse);
     }
 }
