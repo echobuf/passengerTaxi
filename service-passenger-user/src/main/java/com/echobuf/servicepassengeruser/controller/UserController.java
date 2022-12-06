@@ -1,7 +1,7 @@
 package com.echobuf.servicepassengeruser.controller;
 
 import com.echobuf.internalcommon.dto.ResponseResult;
-import com.echobuf.servicepassengeruser.request.VerificationCodeDTO;
+import com.echobuf.internalcommon.request.VerificationCodeDTO;
 import com.echobuf.servicepassengeruser.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
