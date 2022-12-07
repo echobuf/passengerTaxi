@@ -5,10 +5,8 @@ import lombok.Getter;
 
 /**
  * @USER: echobuf
- * @Date: 2022/12/5 - 12 - 05 - 23:19
  * @Description: online-taxi
  */
-//@Data
 public enum CommonStatusEnum {
     /**
      * 验证码错误(1000-1099为错误码)

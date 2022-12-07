@@ -3,10 +3,12 @@ package com.echobuf.apipassenger.service;
 import com.echobuf.apipassenger.remote.ServicePassengerUser;
 import com.echobuf.apipassenger.remote.ServiceVerificationCodeClient;
 import com.echobuf.internalcommon.constant.CommonStatusEnum;
+import com.echobuf.internalcommon.constant.ConstantIdentity;
 import com.echobuf.internalcommon.dto.ResponseResult;
 import com.echobuf.internalcommon.request.VerificationCodeDTO;
 import com.echobuf.internalcommon.response.NumberCodeResponse;
 import com.echobuf.internalcommon.response.TokenResponse;
+import com.echobuf.internalcommon.util.JWTUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -84,7 +86,8 @@ public class VerificationCodeService {
         verificationCodeDTO.setPassengerPhone(passengerPhone);
         servicePassengerUser.loginOrRegister(verificationCodeDTO);
         //颁发token
-        String token = "token str";
+        String token = JWTUtils.generatorToken(passengerPhone, ConstantIdentity.PASSENGER_IDENTITY);
+        //响应
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setToken(token);
         return ResponseResult.success(tokenResponse);
