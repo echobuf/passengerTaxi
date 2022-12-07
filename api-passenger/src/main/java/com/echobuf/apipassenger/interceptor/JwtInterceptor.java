@@ -28,7 +28,7 @@ public class JwtInterceptor implements HandlerInterceptor{
             resultString = "sign error";
             result = false;
         }catch (Exception e){
-            resultString = "token error";
+            resultString = "token invalid";
             result = false;
         }
 
