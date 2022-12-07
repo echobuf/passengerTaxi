@@ -3,6 +3,7 @@ package com.echobuf.internalcommon.util;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -18,8 +19,12 @@ public class JWTUtils {
     //盐
     private static final String SIGNATURE = "echobuf@$$";
 
+    private static final String JWT_KEY_PHONE = "passengerPhone";
+
     //生成token
-    public static String generatorToken(Map<String,String> map){
+    public static String generatorToken(String passengerPhone){
+        Map<String, String> map = new HashMap<>();
+        map.put(JWT_KEY_PHONE,passengerPhone);
         //token过期时间
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE,1);//获取当前日历时间+1天的时间
@@ -41,11 +46,17 @@ public class JWTUtils {
     }
 
     //解析token
+    public static String parseToken(String token){
+        DecodedJWT verify = JWT.require(Algorithm.HMAC256(SIGNATURE)).build().verify(token);
+        String phone = verify.getClaim(JWT_KEY_PHONE).asString();
+
+        return phone;
+
+    }
     public static void main(String[] args) {
-        Map<String, String> map = new HashMap<>();
-        map.put("passengerName","张三");
-        map.put("passengerPhone","12346");
-        System.out.println(generatorToken(map));
+        String token = generatorToken("123456789");
+        System.out.println("生成的token："+token);
+        System.out.println("解析："+parseToken(token));
     }
 }
 
