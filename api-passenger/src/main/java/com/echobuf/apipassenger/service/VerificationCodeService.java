@@ -1,11 +1,12 @@
 package com.echobuf.apipassenger.service;
 
+import com.echobuf.apipassenger.remote.ServicePassengerUser;
 import com.echobuf.apipassenger.remote.ServiceVerificationCodeClient;
 import com.echobuf.internalcommon.constant.CommonStatusEnum;
 import com.echobuf.internalcommon.dto.ResponseResult;
+import com.echobuf.internalcommon.request.VerificationCodeDTO;
 import com.echobuf.internalcommon.response.NumberCodeResponse;
 import com.echobuf.internalcommon.response.TokenResponse;
-import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -28,6 +29,9 @@ public class VerificationCodeService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private ServicePassengerUser servicePassengerUser;
 
     /**
      * 生成验证码
@@ -57,6 +61,7 @@ public class VerificationCodeService {
     private String generateRedisKey(String passengerPhone){
         return verificationCodePrefix + passengerPhone;
     }
+
     /**
      * 校验验证码
      * @param passengerPhone
@@ -74,7 +79,11 @@ public class VerificationCodeService {
         if(!verificationCode.trim().equals(redisCode.trim())){
             return ResponseResult.fail(CommonStatusEnum.VERIFICATION_CODE_ERROR.getCode(),CommonStatusEnum.VERIFICATION_CODE_ERROR.getValue());
         }
-        //如果校验成功则返回附带一个token
+        //校验成功，根据用户手机号查询用户是否注册/登陆信息，返回附带一个token
+        VerificationCodeDTO verificationCodeDTO = new VerificationCodeDTO();
+        verificationCodeDTO.setPassengerPhone(passengerPhone);
+        servicePassengerUser.loginOrRegister(verificationCodeDTO);
+
         String token = "token str";
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setToken(token);
