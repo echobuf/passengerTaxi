@@ -79,11 +79,11 @@ public class VerificationCodeService {
         if(!verificationCode.trim().equals(redisCode.trim())){
             return ResponseResult.fail(CommonStatusEnum.VERIFICATION_CODE_ERROR.getCode(),CommonStatusEnum.VERIFICATION_CODE_ERROR.getValue());
         }
-        //校验成功，根据用户手机号查询用户是否注册/登陆信息，返回附带一个token
+        //校验成功，根据用户手机号查询用户是否注册
         VerificationCodeDTO verificationCodeDTO = new VerificationCodeDTO();
         verificationCodeDTO.setPassengerPhone(passengerPhone);
         servicePassengerUser.loginOrRegister(verificationCodeDTO);
-
+        //颁发token
         String token = "token str";
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setToken(token);
