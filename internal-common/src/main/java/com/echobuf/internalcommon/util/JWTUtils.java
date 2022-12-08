@@ -4,7 +4,9 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.echobuf.internalcommon.constant.TokenConstants;
 import com.echobuf.internalcommon.dto.TokenResult;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -15,6 +17,7 @@ import java.util.Map;
  * @USER: echobuf
  * @Description: online-taxi
  */
+
 public class JWTUtils {
 
     //盐
@@ -23,6 +26,7 @@ public class JWTUtils {
     private static final String JWT_KEY_PHONE = "phone";
     private static final String JWT_KEY_IDENTITY = "identity";
     private static final String JWT_TOKEN_TYPE = "tokenType";
+    private static final String JWT_TOKEN_TIME = "tokenTime";
 
     //生成token
     public static String generatorToken(String phone,String identity,String tokenType){
@@ -39,7 +43,8 @@ public class JWTUtils {
 //        Date date = calendar.getTime();
 //        //整合过期时间
 //        builder.withExpiresAt(date);
-
+        //整合时间,防止生成的token完全一致
+        map.put(JWT_TOKEN_TIME,Calendar.getInstance().getTime().toString());
         //整合map
         map.forEach(
                 (k,v)->{
@@ -63,7 +68,17 @@ public class JWTUtils {
         tokenResult.setPhone(phone);
         tokenResult.setIdentity(identity);
         return tokenResult;
+    }
 
+    //解析token格式是否合法
+    public static TokenResult checkToken(String token){
+        TokenResult tokenResult = null;
+        try {
+            tokenResult = JWTUtils.parseToken(token);
+        }catch (Exception e){
+            //parseToken()报错说明参数不是一个token串，不能被解析
+        }
+        return tokenResult;
     }
     //测试
     public static void main(String[] args) {

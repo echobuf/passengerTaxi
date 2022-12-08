@@ -31,28 +31,24 @@ public class JwtInterceptor implements HandlerInterceptor{
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         boolean result = true;
         String resultString = "";
-        TokenResult tokenResult = null;
 
         //获取前端传过来的token
         String token = request.getHeader("Authorization");
-        //解析token
-        try {
-            tokenResult = JWTUtils.parseToken(token);
-        }catch (SignatureVerificationException e) {
-            resultString = "sign error";
-            result = false;
-        }catch (Exception e){
+        //判断token格式是否合法
+        TokenResult tokenResult = JWTUtils.checkToken(token);
+        if(tokenResult == null){
             resultString = "token invalid";
             result = false;
-        }
-        //判断token是否有效
-        String passengerPhone = tokenResult.getPhone();
-        String identity = tokenResult.getIdentity();
-        String tokenKey = RedisPrefixUtils.generateTokenKey(passengerPhone,identity, TokenConstants.ACCESS_TOKEN_TYPE);
-        String tokenRedis = stringRedisTemplate.opsForValue().get(tokenKey);
-        if(StringUtils.isBlank(tokenRedis) || !(token.trim().equals(tokenRedis.trim()))){
-            resultString = "token invalid";
-            result = false;
+        }else{
+            //判断token是否有效
+            String passengerPhone = tokenResult.getPhone();
+            String identity = tokenResult.getIdentity();
+            String tokenKey = RedisPrefixUtils.generateTokenKey(passengerPhone,identity, TokenConstants.ACCESS_TOKEN_TYPE);
+            String tokenRedis = stringRedisTemplate.opsForValue().get(tokenKey);
+            if(StringUtils.isBlank(tokenRedis) || !(token.trim().equals(tokenRedis.trim()))){
+                resultString = "access token invalid";
+                result = false;
+            }
         }
 
         if(!result){

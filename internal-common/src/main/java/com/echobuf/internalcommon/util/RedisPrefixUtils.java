@@ -18,9 +18,10 @@ public class RedisPrefixUtils {
     }
 
     /**
-     * 根据phone，identity生成token在redis中的的key
+     * 根据phone，identity,tokenType生成token在redis中的的key
      * @param phone
      * @param identity
+     * @param tokenType
      * @return
      */
     public static String generateTokenKey(String phone,String identity,String tokenType){
