@@ -2,8 +2,14 @@ package com.echobuf.apipassenger.interceptor;
 
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.echobuf.internalcommon.dto.ResponseResult;
+import com.echobuf.internalcommon.dto.TokenResult;
 import com.echobuf.internalcommon.util.JWTUtils;
+import com.echobuf.internalcommon.util.RedisPrefixUtils;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,20 +20,36 @@ import java.io.PrintWriter;
  * @USER: echobuf
  * @Description: online-taxi
  */
+@Component
 public class JwtInterceptor implements HandlerInterceptor{
+
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         boolean result = true;
         String resultString = "";
+        TokenResult tokenResult = null;
 
+        //获取前端传过来的token
         String token = request.getHeader("Authorization");
+        //解析token
         try {
-            JWTUtils.parseToken(token);
+            tokenResult = JWTUtils.parseToken(token);
         }catch (SignatureVerificationException e) {
             resultString = "sign error";
             result = false;
         }catch (Exception e){
+            resultString = "token invalid";
+            result = false;
+        }
+        //判断token是否有效
+        String passengerPhone = tokenResult.getPhone();
+        String identity = tokenResult.getIdentity();
+        String tokenKey = RedisPrefixUtils.generateTokenKey(passengerPhone,identity);
+        String tokenRedis = stringRedisTemplate.opsForValue().get(tokenKey);
+        if(StringUtils.isBlank(tokenRedis) || !(token.trim().equals(tokenRedis.trim()))){
             resultString = "token invalid";
             result = false;
         }

@@ -7,7 +7,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * @USER: echobuf
- * @Date: 2022/12/1 - 12 - 01 - 02:18
  * @Description: online-taxi
  */
 

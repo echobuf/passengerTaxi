@@ -9,6 +9,7 @@ import com.echobuf.internalcommon.request.VerificationCodeDTO;
 import com.echobuf.internalcommon.response.NumberCodeResponse;
 import com.echobuf.internalcommon.response.TokenResponse;
 import com.echobuf.internalcommon.util.JWTUtils;
+import com.echobuf.internalcommon.util.RedisPrefixUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -31,21 +32,6 @@ public class VerificationCodeService {
     @Autowired
     private ServicePassengerUser servicePassengerUser;
 
-    private String verificationCodePrefix = "passenger-verification-code-";
-    private String tokenPrefix = "token-";
-
-    /**
-     * 根据手机号生成验证码在redis中的key
-     * @param passengerPhone
-     * @return
-     */
-    private String generateVerificationCodeKey(String passengerPhone){
-        return verificationCodePrefix + passengerPhone;
-    }
-
-    private String generateTokenKey(String passengerPhone,String identity){
-        return tokenPrefix + passengerPhone + "-" + identity;
-    }
 
     /**
      * 生成验证码
@@ -60,7 +46,7 @@ public class VerificationCodeService {
 
         //存入redis
         //key,value,过期时间
-        String key = generateVerificationCodeKey(passengerPhone);
+        String key = RedisPrefixUtils.generateVerificationCodeKey(passengerPhone);
         stringRedisTemplate.opsForValue().set(key,numberCode+"",2, TimeUnit.MINUTES);
 
         //返回
@@ -75,7 +61,7 @@ public class VerificationCodeService {
      */
     public ResponseResult checkVerificationCode(String passengerPhone,String verificationCode){
         //根据手机号，去redis查看是否有对应的key
-        String key = generateVerificationCodeKey(passengerPhone);
+        String key = RedisPrefixUtils.generateVerificationCodeKey(passengerPhone);
         String redisCode = stringRedisTemplate.opsForValue().get(key);
         //校验验证码，根据校验结果处理对应情况
         if(StringUtils.isBlank(redisCode)){
@@ -91,7 +77,7 @@ public class VerificationCodeService {
         //颁发token
         String token = JWTUtils.generatorToken(passengerPhone, ConstantIdentity.PASSENGER_IDENTITY);
         //把token存入redis
-        String tokenKey = generateTokenKey(passengerPhone,ConstantIdentity.PASSENGER_IDENTITY);
+        String tokenKey = RedisPrefixUtils.generateTokenKey(passengerPhone,ConstantIdentity.PASSENGER_IDENTITY);
         stringRedisTemplate.opsForValue().set(tokenKey,token,30, TimeUnit.DAYS);
 
         //响应
