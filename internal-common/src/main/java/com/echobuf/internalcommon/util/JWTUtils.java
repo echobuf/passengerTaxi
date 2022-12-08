@@ -22,26 +22,31 @@ public class JWTUtils {
 
     private static final String JWT_KEY_PHONE = "phone";
     private static final String JWT_KEY_IDENTITY = "identity";
+    private static final String JWT_TOKEN_TYPE = "tokenType";
 
     //生成token
-    public static String generatorToken(String phone,String identity){
+    public static String generatorToken(String phone,String identity,String tokenType){
         Map<String, String> map = new HashMap<>();
         map.put(JWT_KEY_PHONE,phone);
         map.put(JWT_KEY_IDENTITY,identity);
-        //token过期时间
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE,1);//获取当前日历时间+1天的时间
-        Date date = calendar.getTime();
+        map.put(JWT_TOKEN_TYPE,tokenType);
 
         JWTCreator.Builder builder = JWT.create();
+
+//        //token过期时间
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.add(Calendar.DATE,1);//获取当前日历时间+1天的时间
+//        Date date = calendar.getTime();
+//        //整合过期时间
+//        builder.withExpiresAt(date);
+
         //整合map
         map.forEach(
                 (k,v)->{
                        builder.withClaim(k,v);
                 }
         );
-        //整合过期时间
-        builder.withExpiresAt(date);
+
         //生成token
         String sign = builder.sign(Algorithm.HMAC256(SIGNATURE));
 
@@ -62,7 +67,7 @@ public class JWTUtils {
     }
     //测试
     public static void main(String[] args) {
-        String token = generatorToken("123456789","1");
+        String token = generatorToken("123456789","1","accessToken");
         System.out.println("生成的token："+token);
         System.out.println("解析："+parseToken(token));
     }

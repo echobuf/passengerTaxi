@@ -1,6 +1,7 @@
 package com.echobuf.apipassenger.interceptor;
 
 import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.echobuf.internalcommon.constant.TokenConstants;
 import com.echobuf.internalcommon.dto.ResponseResult;
 import com.echobuf.internalcommon.dto.TokenResult;
 import com.echobuf.internalcommon.util.JWTUtils;
@@ -47,7 +48,7 @@ public class JwtInterceptor implements HandlerInterceptor{
         //判断token是否有效
         String passengerPhone = tokenResult.getPhone();
         String identity = tokenResult.getIdentity();
-        String tokenKey = RedisPrefixUtils.generateTokenKey(passengerPhone,identity);
+        String tokenKey = RedisPrefixUtils.generateTokenKey(passengerPhone,identity, TokenConstants.ACCESS_TOKEN_TYPE);
         String tokenRedis = stringRedisTemplate.opsForValue().get(tokenKey);
         if(StringUtils.isBlank(tokenRedis) || !(token.trim().equals(tokenRedis.trim()))){
             resultString = "token invalid";
