@@ -1,5 +1,6 @@
 package com.echobuf.servicepassengeruser.service;
 
+import com.echobuf.internalcommon.constant.CommonStatusEnum;
 import com.echobuf.internalcommon.dto.ResponseResult;
 import com.echobuf.internalcommon.dto.PassengerUser;
 import com.echobuf.servicepassengeruser.mapper.PassengerUserMapper;
@@ -13,7 +14,6 @@ import java.util.Map;
 
 /**
  * @USER: echobuf
- * @Date: 2022/12/7 - 12 - 07 - 02:48
  * @Description: online-taxi
  */
 @Service
@@ -41,5 +41,18 @@ public class UserService {
             passengerUserMapper.insert(user);
         }
         return ResponseResult.success();
+    }
+
+    public ResponseResult getUserByPhone(String passengerPhone){
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("passenger_phone",passengerPhone);
+        List<PassengerUser> passengerUsers = passengerUserMapper.selectByMap(map);
+
+        if(passengerUsers.size()==0){
+            return  ResponseResult.fail(CommonStatusEnum.USER_ERROR.getCode(),CommonStatusEnum.USER_ERROR.getValue());
+        }
+        PassengerUser passengerUser = passengerUsers.get(0);
+        return ResponseResult.success(passengerUser);
     }
 }
