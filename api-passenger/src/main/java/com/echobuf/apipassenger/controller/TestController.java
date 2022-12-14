@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @USER: echobuf
- * @Date: 2022/12/1 - 12 - 01 - 02:25
  * @Description: online-taxi
  */
 @RestController

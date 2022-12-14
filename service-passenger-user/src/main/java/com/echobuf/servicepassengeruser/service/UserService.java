@@ -1,7 +1,7 @@
 package com.echobuf.servicepassengeruser.service;
 
 import com.echobuf.internalcommon.dto.ResponseResult;
-import com.echobuf.servicepassengeruser.dto.PassengerUser;
+import com.echobuf.internalcommon.dto.PassengerUser;
 import com.echobuf.servicepassengeruser.mapper.PassengerUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

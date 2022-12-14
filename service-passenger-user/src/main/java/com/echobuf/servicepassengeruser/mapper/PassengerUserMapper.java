@@ -1,7 +1,7 @@
 package com.echobuf.servicepassengeruser.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.echobuf.servicepassengeruser.dto.PassengerUser;
+import com.echobuf.internalcommon.dto.PassengerUser;
 import org.springframework.stereotype.Repository;
 
 /**

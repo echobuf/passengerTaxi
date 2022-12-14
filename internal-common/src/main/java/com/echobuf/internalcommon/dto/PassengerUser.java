@@ -1,4 +1,4 @@
-package com.echobuf.servicepassengeruser.dto;
+package com.echobuf.internalcommon.dto;
 
 import lombok.Data;
 
@@ -25,5 +25,7 @@ public class PassengerUser {
     private byte passengerGender;
 
     private byte state;
+
+    private String profilePhoto;
 
 }
